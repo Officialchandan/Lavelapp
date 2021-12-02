@@ -12,7 +12,11 @@ import 'spleash_screen.dart';
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
-
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent),
+  );
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var email = prefs.getString('email');
   runApp(MaterialApp(

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -17,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _validate = false;
+  bool _validate1 = false;
 
   @override
   void dispose() {
@@ -28,7 +32,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Mycolors.bgcolors));
+      SystemUiOverlayStyle(
+        statusBarColor: Mycolors.bgcolors,
+        systemNavigationBarColor: Mycolors.bgcolors,
+      ),
+    );
     double appheight = MediaQuery.of(context).size.height;
     double appwidth = MediaQuery.of(context).size.width;
 
@@ -40,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
             height: appheight,
             child: Form(
               key: _formKey,
-              autovalidate: true,
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 16, left: 16),
@@ -72,20 +79,41 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       InputFieldEmail(
                         email: emailController,
-                        onChanged: (val) {},
                         hintText: "Email Address",
+                        showerre: _validate1,
+                        onChanged: (value) {
+                          _validate1 = !_validate1;
+                          setState(() {});
+                        },
                       ),
                       SizedBox(
                         height: appheight * 0.001,
                       ),
                       PasswordField(
                         password: passwordController,
-                        onChanged: (value) {},
+                        isObscure: true,
+                        showerre: _validate,
+                        onChanged: (value) {
+                          _validate = !_validate;
+                          setState(() {});
+                        },
                       ),
                       SizedBox(
                         height: appheight * 0.01,
                       ),
-                      const ForgetPassword(),
+                      ForgetPassword(
+                        press: () {
+                          final snackBar = SnackBar(
+                            content: const Text('not yet honey!'),
+                            action: SnackBarAction(
+                              label: 'Undo',
+                              onPressed: () {},
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        },
+                      ),
                       SizedBox(
                         height: appheight * 0.11,
                       ),
@@ -112,12 +140,35 @@ class _LoginPageState extends State<LoginPage> {
                         height: appheight * 0.02,
                       ),
                       Signinwithgoogle(
-                          appheight: appheight, appwidth: appwidth),
+                        appheight: appheight,
+                        appwidth: appwidth,
+                        press: () {
+                          final snackBar = SnackBar(
+                            content: const Text('not yet honey!'),
+                            action: SnackBarAction(
+                              label: 'Undo',
+                              onPressed: () {},
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        },
+                      ),
                       SizedBox(
                         height: appheight * 0.04,
                       ),
                       AlreadyAccountCheck(
-                        press: () {},
+                        press: () {
+                          final snackBar = SnackBar(
+                            content: const Text('not yet honey!'),
+                            action: SnackBarAction(
+                              label: 'Undo',
+                              onPressed: () {},
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        },
                       )
                     ],
                   ),
@@ -142,15 +193,18 @@ class Signinwithgoogle extends StatelessWidget {
     Key? key,
     required this.appheight,
     required this.appwidth,
+    required this.press,
   }) : super(key: key);
-
+  final Function press;
   final double appheight;
   final double appwidth;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        press();
+      },
       child: Container(
         height: appheight * 0.09,
         decoration: BoxDecoration(
@@ -185,8 +239,10 @@ class Signinwithgoogle extends StatelessWidget {
 }
 
 class ForgetPassword extends StatelessWidget {
+  final Function press;
   const ForgetPassword({
     Key? key,
+    required this.press,
   }) : super(key: key);
 
   @override
@@ -195,7 +251,9 @@ class ForgetPassword extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            press();
+          },
           child: Text(
             "Forgot Password?",
             style: TextStyle(
@@ -248,7 +306,7 @@ class SignInButton extends StatelessWidget {
 
 class InputFieldEmail extends StatelessWidget {
   final String hintText;
-
+  bool showerre;
   final IconData icon;
   TextEditingController email;
   final ValueChanged<String> onChanged;
@@ -258,6 +316,7 @@ class InputFieldEmail extends StatelessWidget {
     required this.email,
     this.icon = Icons.person,
     required this.onChanged,
+    required this.showerre,
   }) : super(key: key);
 
   @override
@@ -269,7 +328,7 @@ class InputFieldEmail extends StatelessWidget {
           style: TextStyle(color: Mycolors.textcolors),
           controller: email,
           autofillHints: const [AutofillHints.email],
-          autovalidate: true,
+          autovalidate: showerre ? showerre = true : showerre = false,
           validator: (value) {
             Pattern pattern =
                 r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -300,11 +359,15 @@ class InputFieldEmail extends StatelessWidget {
 class PasswordField extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final TextEditingController password;
+  bool isObscure;
+  bool showerre;
 
-  const PasswordField({
+  PasswordField({
     Key? key,
     required this.onChanged,
     required this.password,
+    required this.isObscure,
+    required this.showerre,
   }) : super(key: key);
 
   @override
@@ -314,8 +377,6 @@ class PasswordField extends StatefulWidget {
 class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
-    bool _isObscure = true;
-
     return TextFieldContainer(
       child: Material(
         color: Mycolors.bgTextFieldcolors,
@@ -323,18 +384,20 @@ class _PasswordFieldState extends State<PasswordField> {
           style: TextStyle(color: Mycolors.textcolors),
           controller: widget.password,
           autofillHints: const [AutofillHints.password],
-          autovalidate: true,
-          maxLength: 10,
+          autovalidate: widget.showerre
+              ? widget.showerre = true
+              : widget.showerre = false,
+          maxLength: 12,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter password';
             } else if (value.length < 6) {
               return "Please enter 6 digit password";
-            } else if (value.length > 8) {
-              return "Please enter 8 digit password";
+            } else if (value.length > 10) {
+              return "Please enter 10 digit password";
             }
           },
-          obscureText: true,
+          obscureText: widget.isObscure,
           onChanged: widget.onChanged,
           cursorColor: Mycolors.textcolors.withOpacity(0.5),
           decoration: InputDecoration(
@@ -343,26 +406,31 @@ class _PasswordFieldState extends State<PasswordField> {
             counterText: "",
             icon: Icon(
               Icons.lock,
-              color: Mycolors.bgButtonGcolors,
+              color: Mycolors.textcolors.withOpacity(0.5),
             ),
             border: InputBorder.none,
-            suffixIcon: textChange(_isObscure),
+            suffixIcon: textChange(
+                isObscure: widget.isObscure,
+                press: () {
+                  setState(() {
+                    widget.isObscure = !widget.isObscure;
+                  });
+                }),
           ),
         ),
       ),
     );
   }
 
-  IconButton textChange(bool _isObscure) {
+  IconButton textChange(
+      {required bool isObscure, required final Function press}) {
     return IconButton(
       icon: Icon(
-        _isObscure ? Icons.visibility : Icons.visibility_off,
+        isObscure ? Icons.visibility : Icons.visibility_off,
         color: Mycolors.textcolors.withOpacity(0.5),
       ),
       onPressed: () {
-        setState(() {
-          _isObscure = !_isObscure;
-        });
+        press();
       },
     );
   }
@@ -370,34 +438,36 @@ class _PasswordFieldState extends State<PasswordField> {
 
 class AlreadyAccountCheck extends StatelessWidget {
   final bool login;
-  final Function? press;
+  final Function press;
   const AlreadyAccountCheck({
     Key? key,
     this.login = true,
-    this.press,
+    required this.press,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          "don't have an account?",
-          style: TextStyle(fontSize: 16, color: Mycolors.textcolors),
-        ),
-        GestureDetector(
-          // onTap: () {} press,
-          child: Text(
+    return GestureDetector(
+      onTap: () {
+        press();
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "don't have an account?",
+            style: TextStyle(fontSize: 16, color: Mycolors.textcolors),
+          ),
+          Text(
             "sign up",
             style: TextStyle(
               color: Mycolors.bgButtoncolors,
               fontSize: 17,
               fontWeight: FontWeight.bold,
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

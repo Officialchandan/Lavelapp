@@ -25,14 +25,19 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+      SystemUiOverlayStyle(
+        statusBarColor: Mycolors.bgcolors,
+        systemNavigationBarColor: Mycolors.bgcolors,
+      ),
+    );
     var heightApp = MediaQuery.of(context).size.height;
     var widthApp = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Mycolors.bgcolors,
-        elevation: 10.7,
+        automaticallyImplyLeading: false,
+        elevation: 0.4,
         centerTitle: true,
         title: Text(
           "User Profile",
