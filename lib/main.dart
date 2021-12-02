@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lavelapp/home_page.dart';
-import 'package:lavelapp/login_page.dart';
+import 'package:lavelapp/home/home_page.dart';
+import 'package:lavelapp/login/login_page.dart';
 import 'package:lavelapp/utility/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'spleash_screen.dart';
+import 'spleash/spleash_screen.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();

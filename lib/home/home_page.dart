@@ -5,7 +5,7 @@ import 'package:lavelapp/model/api.dart';
 import 'package:lavelapp/utility/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'model/user_model.dart';
+import '../model/user_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
